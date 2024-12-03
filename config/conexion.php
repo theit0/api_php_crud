@@ -1,19 +1,24 @@
 <?php
-    // Configuración para conectarse a la base de datos
-    $host = "localhost";
-    $user = "root";
-    $password = ""; // Cambia si tienes contraseña
-    $dbname = "sistema_de_ventas";
-    $port = 3306; // Asegúrate de que sea el puerto correcto
+class Database {
+    private $host = "localhost";
+    private $user = "root";
+    private $password = "";
+    private $dbname = "sistema_de_ventas";
+    private $port = 3306;
+    private $conn;
 
-    // Conexión
-    $conn = new mysqli($host, $user, $password, $dbname, $port);
-
-    // Verificar conexión
-    if ($conn->connect_error) {
-        die("Error al conectar a la base de datos: " . $conn->connect_error);
+    public function getConnection() {
+        $this->conn = null;
+        try {
+            $dsn = "mysql:host=" . $this->host . ";dbname=" . $this->dbname . ";port=" . $this->port;
+            $this->conn = new PDO($dsn, $this->user, $this->password);
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->conn->exec("set names utf8");
+        } catch(PDOException $e) {
+            echo "Error de conexión: " . $e->getMessage();
+            die();
+        }
+        return $this->conn;
     }
-
-    // Establecer el conjunto de caracteres
-    $conn->set_charset("utf8");
+}
 ?>
